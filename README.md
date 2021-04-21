@@ -41,8 +41,8 @@ Rscript scripts/generate_unrounded_sc_fixedPurity_tCN_file.R
 ```
 ### Quality control of cell line fits
 ```
-./scripts/get_ploidy_purity.R
-./scripts/get_sc_ploidy_purity.R
+Rscript scripts/get_ploidy_purity.R
+Rscript scripts/get_sc_ploidy_purity.R
 ```
 then
 ```
