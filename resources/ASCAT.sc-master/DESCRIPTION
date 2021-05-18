@@ -1,0 +1,18 @@
+Package: ASCAT.sc
+Type: Package
+Title: LogR-based copy number calling for shallow coverage (SC) and/or single-cell sequencing (SC) experiments
+Version: 1.0
+Date: 2019-07-15
+Author: Maxime Tarabichi
+Maintainer: <maxime.tarabichi@gmail.com>
+Description:  LogR-based copy number calling for shallow coverage (SC) and/or single-cell sequencing (SC) experiments
+License: What license is it under?
+Imports:
+    Biostrings,
+    GenomicRanges,
+    Rsamtools,
+    DNAcopy
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

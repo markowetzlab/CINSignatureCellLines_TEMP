@@ -1,0 +1,19 @@
+---
+title: "homozygous-mouse"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{homozygous-mouse}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ASCAT.sc)
+```

@@ -1,0 +1,158 @@
+---
+title: "single-cell-data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Single-cell-data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+## ##################################################
+library(ASCAT.sc)
+## ##################################################
+```
+
+In this vignette, we use ASCAT.sc to analyse a single cell dataset and derive copy number profiles for each cell. The pipeline is very similar to [Ginkgo](https://www.nature.com/articles/nmeth.3578). The main difference remains in the fitting of the states to integers, which follows [ASCAT](https://www.pnas.org/content/107/39/16910)'s rationale and uses the same equations.
+
+## An example dataset: sarcoma
+
+We will use a dataset of single cells from a malignant peripheral
+nerve sheath tumour. Cells were collected from different relapse
+and anatomically distinct regions originating from the same primary
+tumour.
+
+
+## ASCAT.sc to get copy number out
+
+### Quality check
+We will assume that quality check has been performed already. One can use e.g. MAPD, proportion of mitochondrial material, etc. We will also see that the inferred purity should be 1, which can be used as an extra filtering step in ASCAT.sc.
+
+### Setting up project and pipeline
+#### Defining directory structures and input files
+First we define the input and output files, i.e. where to fetch the BAMs and to output the profiles, repsectively. We define the window size as well as the reference genome file and the number of cores to be used for parallelization. Sometimes chromosomes are reported with an extra "chr" prefix, which is given in the variable CHRSTRING (set to "" if no prefix).
+
+
+
+```{r}
+BAMDIR <- "../input/"
+OUTDIR <- "../output/"
+FASTA <- "../ref/hs37d5.fa"
+window <- "1000000"
+CHRSTRING <- "chr"
+MC.CORES <- 5
+```
+
+Next we define where to fetch the pre-computed variable-size bins on disk. These correspond to the aligner and the read length of our experiment. We use the pre-computed bins from Ginkgo (https://github.com/robertaboukhalil/ginkgo), which can be downloaded [here](http://qb.cshl.edu/ginkgo/uploads/hg19.original.tar.gz).
+
+
+```
+BINFILE <- paste0("../bins.variable/hg19.original/variable_", window, "_48_bowtie")
+BADBINSFILE <- paste0("../bins.variable/hg19.original/badbins_variable_", window, "_48_bowtie")
+```
+
+#### Loading required libraries
+
+We next load the required libraries (these are not all dependencies).
+
+```{r}
+library(Rsamtools)
+library(Biostrings)
+library(DNAcopy)
+library(parallel)
+```
+
+### Running ASCAT.sc
+
+#### Loading bams and names
+```{r, eval=F}
+####################################################
+## Get BAMs in the BAM directory
+bams <- dir(BAMDIR,full=T) ## FULL PATHS
+bamsF <- dir(BAMDIR,full=F) ## BAM NAMES
+bamsF <- bamsF[grepl("bam$",bams)]
+bams <- bams[grepl("bam$",bams)]
+print(bamsF)
+####################################################
+setwd(OUTDIR)
+####################################################
+```
+
+#### GC content calculation
+
+We load the reference and define the chromosomes we are interested in (here the automosomes and X).
+
+```{r, eval=F}
+####################################################
+dna <<- getRefGenome(fasta=FASTA)
+####################################################
+## CHROMOSOMES INVESTIGATED
+ALLCHR <- paste0("",c(1:22,"X"))
+####################################################
+```
+
+We then load the starts and ends of each bins per chromosome and compute the GC content within each bin.
+
+```{r, eval=F}
+## get starts and ends of the variable bins
+## these are precomputed in file BINFILE (here for hg19 - bowtie)
+lSe <- lapply(ALLCHR,function(chr)
+    getStartsEnds.Variable(window=window,
+				chr=paste0(CHRSTRING,chr),
+                            	pathWindows=BINFILE))
+names(lSe) <- ALLCHR
+## get GC content in the bins
+## this could be precomputed for all projects with same aligner+read length
+## should take around a few minutes to compute
+lGCT <- lapply(ALLCHR,function(chr)
+{
+    cat(".")
+    gcT <- gcTrack(chr,lSe[[chr]]$starts,
+                   lSe[[chr]]$ends,
+                   dna=dna)
+})
+names(lSe) <- names(lGCT) <- ALLCHR
+```
+
+#### Load coverage tracks
+We finally derive the counts and smooth the track using a lowess fit against GC content for all bams. This will constitute our input data to fit copy number. Because it can take a bit of time, it is advised to save the tracks on disk directly afterwards.
+
+
+```{r, eval=F}
+####################################################
+allTracks <- mclapply(bams,function(bamfile)
+{
+    cat(".")
+    try(getTrackForAll(bamfile,
+                       window,
+                       lSe=lSe,
+                       lGCT=lGCT,
+                       allchr=ALLCHR,
+                       sdNormalise=0),silent=T)
+},mc.cores=MC.CORES)
+####################################################
+names(allTracks) <- bamsF
+save(allTracks,file=paste0("../output/allTracks.brain_48bp_bowtie_",
+	window,
+	".Rda"))
+####################################################
+```
+
+#### Fit copy number to find optimal profile
+
+```{r, eval=F}
+allProfiles <- lapply(allTracks,searchGrid)
+```
+
+
+
+
+## Pipeline for [singe cell CGH dataset](https://www.ebi.ac.uk/arrayexpress/experiments/E-GEOD-52366/?query=%22single+cell%22+DNA&page=3&pagesize=25)
+
