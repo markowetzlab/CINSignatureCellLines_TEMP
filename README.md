@@ -74,6 +74,10 @@ Rscript scripts/generate_unrounded_sc_fixedPurity_tCN_file.R
 ```
 Rscript scripts/plot_summarised_segData.R
 ```
+_slurm-specific_
+```
+sbatch sbatch_plot_summarised_segData
+```
 ### Perform fit selection and filtering
 
 Inspect the copy number profile plots and statistics generated in the previous steps and update the `cell_fit_qc_table.tsv` file to include or exclude samples using a `TRUE` or `FALSE` boolean in the `use` column.

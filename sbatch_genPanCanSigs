@@ -24,5 +24,7 @@
 #SBATCH --no-requeue
 #! General partition
 #SBATCH -p general
+#SBATCH --output logs/slurm-%A.out
+#SBATCH --error logs/slurm-%A.err
 
 Rscript scripts/0_Signature_activities_from_CN_profiles.R

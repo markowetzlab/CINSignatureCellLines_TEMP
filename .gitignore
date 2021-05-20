@@ -37,3 +37,12 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Other
+data/
+data/*
+refs/
+refs/*
+resources/apt_2.11.4_linux_64_bit_x86_binaries/
+resources/ascat/
+slurm-*

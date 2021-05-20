@@ -20,6 +20,9 @@ mv ascat resources/
 if ! [ -d "refs" ]; then
 	mkdir refs
 fi
+if ! [ -d "logs" ]; then
+        mkdir logs
+fi
 
 APT_LIBS_BASE=$(basename ${APT_LIBS})
 wget -c -P "refs/" ${APT_LIBS}
@@ -31,3 +34,7 @@ mv PennCNV refs/
 cp refs/PennCNV/affy/libgw6/* refs/CD_GenomeWideSNP_6_rev3/Full/GenomeWideSNP_6/LibFiles/
 cp refs/PennCNV/affy/bin/normalize_affy_geno_cluster.pl resources/apt_2.11.4_linux_64_bit_x86_binaries/bin/
 cp refs/PennCNV/kcolumn.pl resources/apt_2.11.4_linux_64_bit_x86_binaries/bin/
+
+Rscript -e 'devtools::install("resources/ascat/ASCAT")'
+Rscript -e 'devtools::install("resources/ASCAT.sc-master/")'
+
