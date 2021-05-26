@@ -6,10 +6,11 @@ apply_sig_thresholds <- function(sigs=NULL,thresholds=NULL){
       return(sig_col)
     })
   )
-  colnames(newSigs) <- sig_col_names
-  return(newSigs)
+  newNormSigs <- t(apply(newSigs,1,FUN = function(x) x / sum(x)))
+  colnames(newNormSigs) <- sig_col_names
+  return(newNormSigs)
 }
-
+			 
 cn <- read.table(file = "data/cellLine_segment_ascat_sc_fixed_purity_tCN.tsv",header = T,sep = "\t")
 signature_data <- readRDS(file = "data/signatures/4_Exposures_to_TCGA_Signatures_ASCAT_cellLines_penalty70.rds")
 sig_thresholds <- read.table("resources/3_Boxplots_per_sig_fullTCGA_1000sims_10pGaussian_10pSamplePoisson.txt",
