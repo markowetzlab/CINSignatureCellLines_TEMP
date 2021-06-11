@@ -3,8 +3,7 @@ APT="https://downloads.thermofisher.com/APT/APT_2.11.4/apt_2.11.4_linux_64_bit_x
 ASCAT="https://github.com/VanLoo-lab/ascat.git"
 APT_LIBS="http://www.affymetrix.com/Auth/support/downloads/library_files/genomewidesnp6_libraryfile.zip"
 PENNCNV="https://github.com/WGLab/PennCNV.git"
-# Waiting on perma git link
-#ASCATSC="https://github.com/VanLoo-lab/ascatsc.git"
+ASCATSC="https://github.com/VanLoo-lab/ASCAT.sc.git"
 
 APT_BASE=$(basename ${APT})
 wget -c -P "resources/" ${APT}
@@ -15,9 +14,8 @@ chmod +rx resources/apt_2.11.4_linux_64_bit_x86_binaries/bin/*
 git clone ${ASCAT}
 mv ascat resources/
 
-#git clone ${ASCATSC} 
-#mv ascatsc resources/
-## ADD PUBLIC download link when available
+git clone ${ASCATSC} 
+mv ASCAT.sc resources/
 
 if ! [ -d "refs" ]; then
 	mkdir refs
@@ -38,5 +36,5 @@ cp refs/PennCNV/affy/bin/normalize_affy_geno_cluster.pl resources/apt_2.11.4_lin
 cp refs/PennCNV/kcolumn.pl resources/apt_2.11.4_linux_64_bit_x86_binaries/bin/
 
 Rscript -e 'devtools::install("resources/ascat/ASCAT")'
-Rscript -e 'devtools::install("resources/ASCAT.sc-master/")'
+Rscript -e 'devtools::install("resources/ASCAT.sc/")'
 
