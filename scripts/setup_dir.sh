@@ -3,7 +3,8 @@ APT="https://downloads.thermofisher.com/APT/APT_2.11.4/apt_2.11.4_linux_64_bit_x
 ASCAT="https://github.com/VanLoo-lab/ascat.git"
 APT_LIBS="http://www.affymetrix.com/Auth/support/downloads/library_files/genomewidesnp6_libraryfile.zip"
 PENNCNV="https://github.com/WGLab/PennCNV.git"
-ASCATSC=""
+# Waiting on perma git link
+#ASCATSC="https://github.com/VanLoo-lab/ascatsc.git"
 
 APT_BASE=$(basename ${APT})
 wget -c -P "resources/" ${APT}
@@ -15,6 +16,7 @@ git clone ${ASCAT}
 mv ascat resources/
 
 #git clone ${ASCATSC} 
+#mv ascatsc resources/
 ## ADD PUBLIC download link when available
 
 if ! [ -d "refs" ]; then
