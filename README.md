@@ -1,5 +1,8 @@
 # cell-line-signatures
-Code base used to generate copy number signatures from pan-cancer cell line SNP6.0 array data
+Code base used to generate copy number signatures from pan-cancer cell line SNP6.0 array data used to generate copy number signatures as part of the publication "A pan-cancer compendium of chromosomal instability"
+
+A final version of this data can be found [here](https://github.com/VanLoo-lab/ASCAT.sc).
+
 ## Reproducing cell line data
 ### Setup
 Clone this git repository and `cd` into the directory
